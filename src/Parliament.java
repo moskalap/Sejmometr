@@ -8,6 +8,7 @@ public class Parliament {
     HashMap<String, PoliticalParty> parties=new HashMap<>();
     HashMap<String, Politican> politicans=new HashMap<>();
     HashMap<String, PoliticalParty> partiesByName=new HashMap<>();
+    public HashMap<String, Politican> politicansbyName=new HashMap<>();
 
     public Parliament(){}
 
@@ -20,6 +21,7 @@ public class Parliament {
 
     public void addPolitican(Politican politican, String partyID){
         politicans.put(politican.getID(), politican);
+        politicansbyName.put(politican.getName(), politican);
         parties.get(partyID).addPolitical(politican);
     }
     public PoliticalParty getParty(String id){

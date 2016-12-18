@@ -9,8 +9,8 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args){
 JFrame mainframe=new JFrame("a");
-        mainframe.setContentPane(new MAIN().main);
-        mainframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        mainframe.setContentPane(new MENI().panel1);
+        mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainframe.pack();
         mainframe.setVisible(true);
     }
