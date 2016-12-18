@@ -5,8 +5,16 @@
  * 'paczka' która zawiera dane, które będziemy chcieli od interpretera
  */
 public class RequestedData {
-    String politican;
-    String[] spendingOn; //wydatki na co, np spendingOn={"biuro", "ekspertyzy"..}
+    public int term;
+    public boolean wantPolitic;
+    public boolean wantParty;
+    public boolean wantAll;
+    public PoliticalParty party;
+    public Politican politican;
+    public Parliament parliament;
 
+
+    RequestedData() {
+    }
 
 }

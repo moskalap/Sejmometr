@@ -27,4 +27,8 @@ public class Politican {
     public String getID() {
         return new Integer(id).toString();
     }
+
+    public String getName() {
+        return firstname+" "+lastname;
+    }
 }
