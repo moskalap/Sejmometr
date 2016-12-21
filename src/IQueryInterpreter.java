@@ -12,8 +12,7 @@ public interface IQueryInterpreter {
      * @return
      * package of downloaded data
      */
-
-  //  public DownloadedData interpret();
+  //  public String interpret();
 
 
 

@@ -5,16 +5,29 @@
  * 'paczka' która zawiera dane, które będziemy chcieli od interpretera
  */
 public class RequestedData {
-    public int term;
-    public boolean wantPolitic;
-    public boolean wantParty;
-    public boolean wantAll;
-    public PoliticalParty party;
-    public Politican politican;
-    public Parliament parliament;
+    public final String term;
+    public final String politic;
+    public final String party;
+    public final int expense;
 
 
-    RequestedData() {
+    public final boolean wantsPolitican;
+    public final boolean wantsParty;
+    public final boolean wantsAverage;
+    public final boolean wantsTheLongestTravel;
+    public final boolean wantsTheMostExpensiveTravel;
+    public final boolean wantsListofTravellersTo_;
+
+    public RequestedData(String term, String politic, String party, int expense, boolean wantsPolitican, boolean wantsParty, boolean wantsAverage, boolean wantsTheLongestTravel, boolean wantsTheMostExpensiveTravel, boolean wantsListofTravellersTo_) {
+        this.term = term;
+        this.politic = politic;
+        this.party = party;
+        this.expense = expense;
+        this.wantsPolitican = wantsPolitican;
+        this.wantsParty = wantsParty;
+        this.wantsAverage = wantsAverage;
+        this.wantsTheLongestTravel = wantsTheLongestTravel;
+        this.wantsTheMostExpensiveTravel = wantsTheMostExpensiveTravel;
+        this.wantsListofTravellersTo_ = wantsListofTravellersTo_;
     }
-
 }

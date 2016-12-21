@@ -43,65 +43,16 @@ public class MENI {
         comboBox1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
-
-                if(comboBox1.getSelectedItem().equals("7")) {
-                    dd = new DataDownloader("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=7");
-                }
-                else{
-                    dd = new DataDownloader("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=8");
-                }
-
-                try {   expenses=dd.downloadArrayExp(174);
-                    for (String s : dd.downloadListofExpenses(174))
-                        comboBox4.addItem(s);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    dd.downloadParties(parliament);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                for(Object obj:parliament.showParties()) {
-                    PoliticalParty o = (PoliticalParty) obj;
-                    comboBox2.addItem(o.getName());
-                }
-                partia.setVisible(true);
-                comboBox2.setVisible(true);
-
-
-
-
+                firstTriggered();
             }
         });
         comboBox2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
 
-              //  comboBox3.addItem("Wszyscy");
-                LinkedList<String> list=new LinkedList<>();
-                for(Politican politican:parliament.getPartybyName((String)comboBox2.getSelectedItem()).getPoliticans())
-                    list.add(politican.getName());
+              secondTriggered();
 
-                Collections.sort(list, new Comparator<String>() {
-                    @Override
-                    public int compare(String o1, String o2) {
-                        return Collator.getInstance().compare(o1, o2);
-                    }
-                });
 
-                for(String s:list)
-                    comboBox3.addItem(s);
-
-            posel.setVisible(true);
-                comboBox3.setVisible(true);
             }
 
         });
@@ -109,37 +60,112 @@ public class MENI {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
 
-                if (((String) (comboBox3.getSelectedItem())).equals("Wszyscy")) {
-                    hide();
-                } else {
-                    unhide();
-
-                }
+                thirdTriggered();
             }
         });
         comboBox4.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
 
-               String key=((String)(comboBox4.getSelectedItem())).split("\\.")[0];
-                String politican=(String) comboBox3.getSelectedItem();
-              // out.append(politican+" "+ key);
-                try {
-                    if(!politican.equals("Wszyscy")) {
-                        out.setText(politican+" wydał "+dd.downloadExpense(parliament.politicansbyName.get(politican).getID(), key)+" na "+expenses[Integer.parseInt(key)]);
-                        out.append(dd.downloadExpense(parliament.politicansbyName.get(politican).getID(), key));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                fourthTriggered();
+            }
+        });
+        OKButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                out.setText("Pobieranie danych...");
+                RequestedData requestedData=saveSelections();
+                QueryInterpreter queryInterpreter=new queryInterpreter();
+                out.setText(queryInterpreter.interpret(requestedData));
             }
         });
     }
 
+    private RequestedData saveSelections() {
+        return new RequestedData()
+    }
 
 
+    private void fourthTriggered() {
+        String key=((String)(comboBox4.getSelectedItem())).split("\\.")[0];
+        String politican=(String) comboBox3.getSelectedItem();
+        // out.append(politican+" "+ key);
+        try {
+            if(!politican.equals("Wszyscy")) {
+                out.setText(politican+" wydał\n "+dd.downloadExpense(parliament.politicansbyName.get(politican).getID(), key)+" na\n "+expenses[Integer.parseInt(key)-1]);
+
+
+                // / out.append(dd.downloadExpense(parliament.politicansbyName.get(politican).getID(), key));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void thirdTriggered() {
+        if (((String) (comboBox3.getSelectedItem())).equals("Wszyscy")) {
+            hide();
+        } else {
+            unhide();
+
+        }
+    }
+
+    private void secondTriggered() {
+        //  comboBox3.addItem("Wszyscy");
+        LinkedList<String> list=new LinkedList<>();
+        for(Politican politican:parliament.getPartybyName((String)comboBox2.getSelectedItem()).getPoliticans())
+            list.add(politican.getName());
+
+        Collections.sort(list, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return Collator.getInstance().compare(o1, o2);
+            }
+        });
+
+        for(String s:list)
+            comboBox3.addItem(s);
+
+        posel.setVisible(true);
+        comboBox3.setVisible(true);
+    }
+
+
+    private void firstTriggered(){
+        if(comboBox1.getSelectedItem().equals("7")) {
+            dd = new DataDownloader("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=7");
+        }
+        else{
+            dd = new DataDownloader("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=8");
+        }
+
+        try {   expenses=dd.downloadArrayExp(174);
+            for (String s : dd.downloadListofExpenses(174))
+                comboBox4.addItem(s);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            dd.downloadParties(parliament);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        for(Object obj:parliament.showParties()) {
+            PoliticalParty o = (PoliticalParty) obj;
+            comboBox2.addItem(o.getName());
+        }
+        partia.setVisible(true);
+        comboBox2.setVisible(true);
+    }
 
     private void hide(){
         najdroższaPodróżCheckBox.setVisible(true);

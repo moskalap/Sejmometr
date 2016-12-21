@@ -117,20 +117,18 @@ public class DataDownloader {
         double sum=0.0;
         String u="https://api-v3.mojepanstwo.pl/dane/poslowie/"+id+".json?layers[]=krs&layers[]=wydatki";
        JSONObject json =readJsonFrom(u);
-      //  JSONArray j=json.getJSONObject("layers").getJSONObject("wydatki").getJSONArray("roczniki");
-       // for(int i=0; i<j.length(); i++){ //j-tablica z wydatkami w danym roku
+        JSONArray j=json.getJSONObject("layers").getJSONObject("wydatki").getJSONArray("roczniki");
+       for(int i=0; i<j.length(); i++){ //j-tablica z wydatkami w danym roku
 
 
             //String[] k= (String[]) j.getJSONObject(i).getJSONArray("pola").get(i); //tablica z wydatkami
-            //double a=Double.parseDouble((String) j.getJSONObject(i).getJSONArray("pola").get(i));
-            //System.out.println(j.getJSONObject(i).getJSONArray("pola"));
-          //  JSONArray k=j.getJSONObject(i).getJSONArray("pola");
+            double a=Double.parseDouble((String) j.getJSONObject(i).getJSONArray("pola").get(i));
+            System.out.println(j.getJSONObject(i).getJSONArray("pola"));
+           JSONArray k=j.getJSONObject(i).getJSONArray("pola");
 
-           // for(int g=0; g<k.length(); g++){ //pod k.get(g) będzie teraz object ktorego castujemy do stringa, którego można zcastować do double // ja pierdole
-             //  sum+=Double.parseDouble((String) k.get(g));
-           // }
-
-
+           for(int g=0; g<k.length(); g++){ //pod k.get(g) będzie teraz object ktorego castujemy do stringa, którego można zcastować do double // ja pierdole
+            sum+=Double.parseDouble((String) k.get(g));
+            }
 
 
 
@@ -145,7 +143,9 @@ public class DataDownloader {
 
 
 
-      //  }
+
+
+        }
         return sum;
 
 
@@ -154,6 +154,7 @@ public class DataDownloader {
 
     public String downloadExpense(String id, String s) throws JSONException, IOException {
         System.out.println("pobiore dla "+id+" "+s);
+        s=Integer.toString(Integer.parseInt(s)-1);
         double sum=0.0;
         String u="https://api-v3.mojepanstwo.pl/dane/poslowie/"+id+".json?layers[]=krs&layers[]=wydatki";
         JSONObject json =readJsonFrom(u);
@@ -175,6 +176,7 @@ public class DataDownloader {
 
     }
 
+
     public String[] downloadArrayExp(int id) throws JSONException, IOException {
 
         String[] res=new String[20];
@@ -184,7 +186,14 @@ public class DataDownloader {
         LinkedList<String> list=new LinkedList<>();
         JSONArray j=json.getJSONObject("layers").getJSONObject("wydatki").getJSONArray("punkty");
         for(int i=0; i<j.length(); i++){
-           res[i]=j.getJSONObject(i).getString("tytul");
+            String[] tmp=j.getJSONObject(i).getString("tytul").split("\\s+");
+            String s="";
+            for(int h=0; h<tmp.length; h++) {
+                s += tmp[h] + " ";
+                if (h % 5 == 4)
+                    s += "\n";
+            }
+           res[i]=s;
         }
         return res;
 

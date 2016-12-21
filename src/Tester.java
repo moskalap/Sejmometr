@@ -17,9 +17,9 @@ public class Tester {
         DataDownloader dd=new DataDownloader("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=7");
 
         Parliament parliament = new Parliament();
-        //testujBudowanieParlamentu(dd, parliament);
-        //testujPobieranieSumyWydatków(dd, parliament);
-        testujPobieranieWydatku(dd);
+        testujBudowanieParlamentu(dd, parliament);
+        testujPobieranieSumyWydatków(dd, parliament);
+        //testujPobieranieWydatku(dd);
 
 
 
@@ -55,20 +55,22 @@ public class Tester {
 
     private static void testujPobieranieSumyWydatków(DataDownloader dd, Parliament parliament) throws IOException, JSONException {
 
+        double sum=0.0;
         int perc=1;
         int j=1;
         for (Object obj : parliament.showParties()) {
             PoliticalParty o = (PoliticalParty) obj;
-          //  System.out.println("Partia "+k+ o.getName());
-            //int g=1;
+         //  System.out.println("Partia "+k+ o.getName());
+              int g=1;
             for( Politican p:o.getPoliticans()){
-              //  System.out.println( g+ ". Polityk: " + p.getName() +"("+p.getID()+")");
-                System.out.println( dd.sumofExpenses(p.getID()));
+                System.out.println( g+ ". Polityk: " + p.getName() +"("+p.getID()+")");
+                sum+=dd.sumofExpenses(p.getID());
+                System.out.println( sum);
 
                 System.out.println(perc*100/(parliament.showPoliticans().size())+"%");
                 perc+=1.0;
-                //g++;
-               // j++;
+              g++;
+               j++;
             }
 
         }
