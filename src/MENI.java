@@ -38,7 +38,7 @@ public class MENI {
     Parliament parliament=new Parliament();
 
 
-    public MENI() {
+  /*  public MENI() {
        // comboBox4.setEnabled(false);
         comboBox1.addActionListener(new ActionListener() {
             @Override
@@ -187,4 +187,5 @@ public class MENI {
         comboBox4.setVisible(true);
 
     }
+    */
 }

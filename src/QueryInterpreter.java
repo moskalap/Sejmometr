@@ -1,3 +1,7 @@
+import org.json.JSONException;
+
+import java.io.IOException;
+
 /**
  * Created by przemek on 21.12.16.
  *
@@ -12,37 +16,48 @@ public class QueryInterpreter implements IQueryInterpreter {
 
     public QueryInterpreter(RequestedData rd){
         this.requestedData=rd;
+
     }
 
-    public String interpret(RequestedData requestedData){
+    public String interpret(RequestedData requestedData) throws IOException, JSONException {
         this.requestedData=requestedData;
 
 
 
-        dataDownloader=new DataDownloader(requestedData.term);
+        dataDownloader=new DataDownloader("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]="+requestedData.term);
+        this.parliament=new Parliament();
+        dataDownloader.setParliament(this.parliament);
+        dataDownloader.downloadParties(this.parliament);
+
         if(requestedData.wantsPolitican){
            return new StringBuilder().append("Poseł ").
                    append(requestedData.politic).
                    append(": \nSuma wydatków wynosi\n").
                    append(dataDownloader.sumofExpenses(requestedData.politicanid)).
-                   append(" W tym \n").
-                   append(dataDownloader.downloadExpense(requestedData.politicanid, requestedData.expenseID)).toString();
+                   append("zł\nW tym \n").
+                   append(dataDownloader.downloadExpense(requestedData.politicanid, requestedData.expenseID)).
+                   append("zł na\n").append(dataDownloader.getExpenseName(requestedData.expenseID)).toString();
         }
         if(requestedData.wantsParty){
             StringBuilder out= new StringBuilder();
             if(requestedData.wantsAverage)
-                out.append("\nŚrednia wydatków partii ").
+                out.append("\nSuma wydatków partii ").
                         append(requestedData.party).
                         append(" wynosi:\n").
-                        append(dataDownloader.downloadAverageOfParty(requestedData.party)).
-                        append("\n\n\n\n");
+                        append(dataDownloader.downloadSumOfParty(requestedData.party, parliament)).
+                        append("zł\n").
+                        append("Średnia wartość wydatków posła partii ").
+                        append(requestedData.party).
+                        append(" wynosi:\n").
+                        append(dataDownloader.downloadAvgOfParty(requestedData.party, parliament)).
+                        append("zł\n");
 
             if(requestedData.wantsListofTravellersTo_) {
                 out.append("\nPosłowie z partii ").
                         append(requestedData.party).
                         append("\nktórzy podrózowali do ").
-                        append(requestedData.country);
-                        for(Politican politican:dataDownloader.downloadListofTravellersto_(String country, String party)) {
+                        append(requestedData.country+"\n");
+                        for(Politican politican:dataDownloader.downloadListofTravellersto_(requestedData.country, requestedData.party)) {
                             out.append(politican.getName());
                             out.append("\n");
                         }
@@ -54,7 +69,7 @@ public class QueryInterpreter implements IQueryInterpreter {
                 out.append("\nCzłonek partii ").
                         append(requestedData.party).
                         append("\nktóry odbył najdłuższa podróż to\n").
-                        append(dataDownloader.downloadTheLongTravel(requestedData.party));
+                        append(dataDownloader.downloadTheLongTravel(requestedData.party).getName());
 
 
 
@@ -92,7 +107,7 @@ public class QueryInterpreter implements IQueryInterpreter {
             if(requestedData.wantsListofTravellersTo_) {
                 out.append("\nPosłowie, ktorzy podróżowali do ").
                         append(requestedData.country);
-                for(Politican politican:dataDownloader.downloadListofTravellersto_(String country, String party)) {
+                for(Politican politican:dataDownloader.downloadListofTravellersto_(requestedData.country, requestedData.party)) {
                     out.append(politican.getName());
                     out.append("\n");
                 }
@@ -132,12 +147,7 @@ public class QueryInterpreter implements IQueryInterpreter {
 
 
 
-
-
-
-
-
-
         }
+        return "error";
     }
 }

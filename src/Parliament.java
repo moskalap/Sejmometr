@@ -24,9 +24,10 @@ public class Parliament {
         politicansbyName.put(politican.getName(), politican);
         parties.get(partyID).addPolitical(politican);
     }
-    public PoliticalParty getParty(String id){
-        if(!parties.containsKey(id)) throw new IllegalArgumentException("brak takiej partii");
-        return parties.get(id);
+    public PoliticalParty getParty(String name){
+        if(!partiesByName.containsKey(name)) throw new IllegalArgumentException("brak takiej partii");
+      return this.partiesByName.get(name);
+      // parties.get(name);
     }
     public Collection<PoliticalParty> showParties(){
         return parties.values();
