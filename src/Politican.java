@@ -29,6 +29,6 @@ public class Politican {
     }
 
     public String getName() {
-        return firstname+" "+lastname;
+        return lastname+" "+firstname;
     }
 }
