@@ -21,13 +21,7 @@ public class QueryInterpreter implements IQueryInterpreter {
 
     public String interpret(RequestedData requestedData) throws IOException, JSONException {
         this.requestedData=requestedData;
-
-
-
-        dataDownloader=new DataDownloader("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]="+requestedData.term);
-        this.parliament=new Parliament();
-        dataDownloader.setParliament(this.parliament);
-        dataDownloader.downloadParties(this.parliament);
+        dataDownloader.setParliament(parliament);
 
         if(requestedData.wantsPolitican){
            return new StringBuilder().append("Poseł ").
@@ -100,14 +94,16 @@ public class QueryInterpreter implements IQueryInterpreter {
 
             StringBuilder out= new StringBuilder();
             if(requestedData.wantsAverage)
-                out.append("\nŚrednia wydatków wszyskich posłów wynosi").
-                        append(dataDownloader.downloadAverageOf(requestedData.party)).
+                out.append("Suma wydatków wszystkich posłów wynosi ").
+                        append(dataDownloader.downloadSumOfParty("-a", parliament)).
+                        append("\nŚrednia wydatków wszyskich posłów wynosi").
+                        append(dataDownloader.downloadAvgOfParty("-a",parliament)).
                         append("\n\n\n\n");
 
             if(requestedData.wantsListofTravellersTo_) {
                 out.append("\nPosłowie, ktorzy podróżowali do ").
                         append(requestedData.country);
-                for(Politican politican:dataDownloader.downloadListofTravellersto_(requestedData.country, requestedData.party)) {
+                for(Politican politican:dataDownloader.downloadListofTravellersto_(requestedData.country, "-a")) {
                     out.append(politican.getName());
                     out.append("\n");
                 }
@@ -116,38 +112,35 @@ public class QueryInterpreter implements IQueryInterpreter {
             }
             if(requestedData.wantsTheLongestTravel){
 
-                out.append("\nCzłonek partii ").
-                        append(requestedData.party).
-                        append("\nktóry odbył najdłuższa podróż to\n").
-                        append(dataDownloader.downloadTheLongTravel(requestedData.party));
+                out.append("\nPoseł który odbył najdłuższą podróż ").
+                        append(dataDownloader.downloadTheLongTravel("-a").getName());
 
 
 
             }
             if(requestedData.wantsTheMostExpensiveTravel){
 
-                out.append("\nCzłonek partii ").
-                        append(requestedData.party).
-                        append("\nktóry odbył najdroższą podróż to\n").
-                        append(dataDownloader.downloadTheExpensiverTraveller(requestedData.party));
+                out.append("\nPoseł który odbył najdroższą podróż ").
+                        append(dataDownloader.downloadTheExpensiverTraveller("-a"));
 
             }
             if(requestedData.wantsTheGreatestTraveller){
-                out.append("\nCzłonek partii ").
-                        append(requestedData.party).
-                        append("\nktóry najwięcej podróżował to\n").
-                        append(dataDownloader.downloadTheGreatesTrveller(requestedData.party));
+                out.append("\nPoseł który najwięcej podróżował ").
+                        append(dataDownloader.downloadTheGreatestTrveller("-a"));
 
 
             }
 
 
             return out.toString();
-
-
-
-
         }
         return "error";
+    }
+
+    public void setParliament(Parliament parliament) {
+        this.parliament = parliament;
+    }
+    public void setDownloader(DataDownloader downloader){
+        this.dataDownloader=downloader;
     }
 }
