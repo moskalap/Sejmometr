@@ -23,7 +23,7 @@ public class DataDownloader {
     String mainUrl;
     String term;
     String[] expenses;
-    Parliament parliament;
+  private  Parliament parliament;
    // Parliament parliament=new Parliament();
 
     //"https://api-v3.mojepanstwo.pl/dane/poslowie.json?_type=objects&page=2";
@@ -119,38 +119,22 @@ return sb.toString();
     }
 
 
-    public  void saveJsonFrom2(String url, String id, String term) throws IOException, JSONException {
-        InputStream is = new URL(url).openStream();
-        try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            String jsonText = readAll(rd);
-            Writer writer = null;
+    public String downloadimage(String name, int index) throws IOException, JSONException {
 
-            try {
-                writer = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream("/home/przemek/Dokumenty/JavaWorkspace/oop/lab9/API/res/politican/"+term+"/"+id+".json"), "utf-8"));
-                writer.write(jsonText);
-            } catch (IOException ex) {
-                // report
-            } finally {
-                try {writer.close();} catch (Exception ex) {/*ignore*/}
-            }
-            // PrintWriter out= new PrintWriter("/politican/"+id+".txt");
-            //out.print(jsonText);
-            //out.close();
+        name=name.replaceAll("\\s+", "%22");
+        System.out.println(name);
+      String u="https://www.googleapis.com/customsearch/v1?q="+name+"&cx=006436199788929835488%3Awfjcyviz_e0&imgSize=large&searchType=image&key=AIzaSyBxQyLyAKSC1chHULCTjwDHCZN_dD188vw";
+      JSONObject j=readJsonFrom(u);
+      System.out.println(j.getJSONArray("items").getJSONObject(index).getString("link"));
 
-        } finally {
-            is.close();
-        }
+
+return //"https://pbs.twimg.com/profile_images/658536731315183616/6IX58ddO.jpg";
+j.getJSONArray("items").getJSONObject(0).getString("link");
+
+
+
+
     }
-
-
-
-
-
-
-
-
 
 
     public void downloadParties(Parliament parliament) throws IOException, JSONException {
@@ -177,70 +161,6 @@ return sb.toString();
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void saveParties(Parliament parliament) throws IOException, JSONException {
-        int ih=0;
-        System.out.println("Downloading Data");
-        for(int i=1; i<=15; i++) {
-            System.out.println((i*100)/15+"%");
-            // progressBar1.setValue(i*100/15);
-            JSONObject json = readJsonFromPage(new Integer(i).toString());
-            JSONArray jsonArray = json.getJSONArray("Dataobject");
-            for (int j = 0; j < jsonArray.length(); j++) {
-                ih++;
-                //System.out.println(j + " " + jsonArray.getJSONObject(j).getJSONObject("data").getString("sejm_kluby.nazwa"));
-                if(!jsonArray.getJSONObject(j).getJSONObject("data").getString("sejm_kluby.nazwa").equals("")) {
-                    parliament.addParty(new PoliticalParty(jsonArray.getJSONObject(j).getJSONObject("data").getString("sejm_kluby.id"), jsonArray.getJSONObject(j).getJSONObject("data").getString("sejm_kluby.nazwa")));
-                    parliament.addPolitican(new Politican( Integer.parseInt(jsonArray.getJSONObject(j).getJSONObject("data").getString("poslowie.id")), jsonArray.getJSONObject(j).getJSONObject("data").getString("poslowie.imie_pierwsze"), jsonArray.getJSONObject(j).getJSONObject("data").getString("poslowie.nazwisko")), jsonArray.getJSONObject(j).getJSONObject("data").getString("sejm_kluby.id") );
-                    //parliament.addPolitican(new Politican( Integer.parseInt(jsonArray.getJSONObject(j).getJSONObject("data").getString("poslowie.id")), jsonArray.getJSONObject(j).getJSONObject("data").getString("poslowie.imie_pierwsze"), jsonArray.getJSONObject(j).getJSONObject("data").getString("poslowie.nazwisko")), jsonArray.getJSONObject(j).getJSONObject("data").getString("sejm_kluby.id") );
-                }
-            }
-        }
-        System.out.println("\n Pobrano "+ih+" polityków");
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void downloadPoliticans(Parliament parliament) throws IOException, JSONException {
-        System.out.println("Downloading Data");
-        for(int i=1; i<=15; i++) {
-            System.out.println((i*100)/15+"%");
-            JSONObject json = readJsonFromPage(new Integer(i).toString());
-            JSONArray jsonArray = json.getJSONArray("Dataobject");
-            for (int j = 0; j < jsonArray.length(); j++) {
-                System.out.println(j + " " + jsonArray.getJSONObject(j).getJSONObject("data").getString("sejm_kluby.nazwa"));
-                if(!jsonArray.getJSONObject(j).getJSONObject("data").getString("sejm_kluby.nazwa").equals(""))
-                    parliament.addPolitican(new Politican( Integer.parseInt(jsonArray.getJSONObject(j).getJSONObject("data").getString("poslowie.id")), jsonArray.getJSONObject(j).getJSONObject("data").getString("poslowie.imie_pierwsze"), jsonArray.getJSONObject(j).getJSONObject("data").getString("poslowie.nazwisko")), jsonArray.getJSONObject(j).getJSONObject("data").getString("sejm_kluby.id") );
-            }
-        }
-      //  System.out.println("\n Pobrano "+ih+" polityków");
-
-    }
-
-
     public LinkedList<String> downloadListofExpenses(int id) throws IOException, JSONException {
         String u="https://api-v3.mojepanstwo.pl/dane/poslowie/"+id+".json?layers[]=krs&layers[]=wydatki";
         JSONObject json =readJsonFrom(u);
@@ -259,7 +179,7 @@ return sb.toString();
             double sum=0.0;
            // String u="https://api-v3.mojepanstwo.pl/dane/poslowie/"+id+".json?layers[]=wydatki";
            // JSONObject json =readJsonFrom(u);
-        JSONObject json= new JSONObject(new Scanner(new File("/home/przemek/Dokumenty/JavaWorkspace/oop/lab9/API/res/politican/"+"7"+"/"+id+".json")).useDelimiter("\\Z").next());
+        JSONObject json= new JSONObject(new Scanner(new File("/home/przemek/Dokumenty/JavaWorkspace/oop/lab9/API/res/politican/"+term+"/"+id+".json")).useDelimiter("\\Z").next());
         JSONArray j=json.getJSONObject("layers").getJSONObject("wydatki").getJSONArray("roczniki");
            for(int i=0; i<j.length(); i++){
              JSONArray expenses=j.getJSONObject(i).getJSONArray("pola");
@@ -295,7 +215,6 @@ return sb.toString();
 
     }
 
-
     public String[] downloadArrayExp(int id) throws JSONException, IOException {
 
         String[] res=new String[20];
@@ -322,10 +241,16 @@ return sb.toString();
     }
 
     public String downloadSumOfParty(String party, Parliament parliament) throws IOException, JSONException {
-        PoliticalParty par=parliament.getParty(party);
+        LinkedList<Politican> listOfPolitican;
+        if(party.equals("-a")) {
+            listOfPolitican = parliament.getMembers();
+        }
+        else {
+            listOfPolitican = (LinkedList<Politican>) parliament.getPartybyName(party).getPoliticans();
+        }
         double sum=0.0;
        // Politican politican;
-        for(Politican politican:par.getPoliticans())
+        for(Politican politican:listOfPolitican)
             sum+=this.sumofExpenses(politican.getID());
 
         NumberFormat formatter = new DecimalFormat("#0.00");
@@ -336,13 +261,20 @@ return sb.toString();
     }
 
     public String downloadAvgOfParty(String party, Parliament parliament) throws IOException, JSONException {
-        PoliticalParty par=parliament.getParty(party);
+
+        LinkedList<Politican> listOfPolitican;
+                if(party.equals("-a")) {
+                 listOfPolitican = parliament.getMembers();
+                }
+                else {
+                    listOfPolitican = (LinkedList<Politican>) parliament.getPartybyName(party).getPoliticans();
+                }
         double sum=0.0;
-        // Politican politican;
-        for(Politican politican:par.getPoliticans())
+
+        for(Politican politican:listOfPolitican)
             sum+=this.sumofExpenses(politican.getID());
 
-        sum=sum/par.getPoliticans().size();
+        sum=sum/listOfPolitican.size();
 
         NumberFormat formatter = new DecimalFormat("#0.00");
 
@@ -370,7 +302,24 @@ return sb.toString();
 
     public ArrayList<Politican> downloadListofTravellersto_(String country, String party) throws FileNotFoundException, JSONException {
         ArrayList<Politican> res=new ArrayList<>();
-        for(Politican p:parliament.getParty(party).getPoliticans()){
+
+
+
+        LinkedList<Politican> listOfPolitican;
+        if(party.equals("-a")) {
+            listOfPolitican = parliament.getMembers();
+        }
+        else {
+            listOfPolitican = (LinkedList<Politican>) parliament.getPartybyName(party).getPoliticans();
+        }
+
+
+
+
+
+
+
+        for(Politican p:listOfPolitican){
             if (wasTravellerTo_(country,p.getID())) res.add(p);
 
         }
@@ -381,7 +330,21 @@ return sb.toString();
     public Politican  downloadTheLongTravel(String party) throws FileNotFoundException, JSONException {
     Politican res=new Politican(-23,"nikt","nikt");
         int days=0;
-        for(Politican p:parliament.getParty(party).getPoliticans()){
+
+
+        LinkedList<Politican> listOfPolitican;
+        if(party.equals("-a")) {
+            listOfPolitican = parliament.getMembers();
+        }
+        else {
+            listOfPolitican = (LinkedList<Politican>) parliament.getPartybyName(party).getPoliticans();
+        }
+
+
+
+
+
+        for(Politican p:listOfPolitican){
 
 
             System.out.println("CURMAX="+days+"\nSprawdzam"+p.getID()+" "+p.getName());
@@ -425,8 +388,24 @@ return sb.toString();
 
 
         Politican res=new Politican(-23,"nikt","nikt");
+
+
+
+        LinkedList<Politican> listOfPolitican;
+        if(party.equals("-a")) {
+            listOfPolitican = parliament.getMembers();
+        }
+        else {
+            listOfPolitican = (LinkedList<Politican>) parliament.getPartybyName(party).getPoliticans();
+        }
+
+
+
+
+
+
         double price=0.0;
-        for(Politican p:parliament.getParty(party).getPoliticans()){
+        for(Politican p:listOfPolitican){
 
 
             System.out.println("\nCURMAX="+price+"\nSprawdzam"+p.getID()+" "+p.getName());
@@ -457,7 +436,7 @@ return sb.toString();
         }
 
 
-        return res.getName()+"kwota: "+price;
+        return res.getName()+" - kwota: "+price;
 
 
 
@@ -478,8 +457,19 @@ return sb.toString();
 
 
         Politican res=new Politican(-23,"nikt","nikt");
+
+
+        LinkedList<Politican> listOfPolitican;
+        if(party.equals("-a")) {
+            listOfPolitican = parliament.getMembers();
+        }
+        else {
+            listOfPolitican = (LinkedList<Politican>) parliament.getPartybyName(party).getPoliticans();
+        }
+
+
         int travels=0;
-        for(Politican p:parliament.getParty(party).getPoliticans()){
+        for(Politican p:listOfPolitican){
 
 
             System.out.println("\nCURMAX="+travels+"\nSprawdzam"+p.getID()+" "+p.getName());
@@ -510,7 +500,7 @@ return sb.toString();
         }
 
 
-        return res.getName()+"podróży: "+travels;
+        return res.getName()+"- podróży: "+travels;
 
 
 
@@ -518,22 +508,6 @@ return sb.toString();
 
 
     }
-
-    public char[] downloadAverageOf(String party) {
-        return null;
-    }
-
-    public char[] downloadTheGreatesTrveller(String party) {
-        return null;
-    }
-
-
-
-
-
-
-
-
 
     public void saveObj(String id, String term) throws IOException, JSONException {
         String u="https://api-v3.mojepanstwo.pl/dane/poslowie/"+id+".json?layers[]=wydatki&layers[]=wyjazdy";
@@ -542,16 +516,6 @@ return sb.toString();
 
     }
 
-
-    public void opeen(String id) throws IOException, JSONException {
-        double sum=0.0;
-        String u="https://api-v3.mojepanstwo.pl/dane/poslowie/"+id+".json?layers[]=wydatki";
-        JSONObject json =readJsonFrom(u);
-        JSONArray j=json.getJSONObject("layers").getJSONObject("wydatki").getJSONArray("roczniki");
-        System.out.println("op");
-    }
-
-
     public String getExpenseName(String expenseID) {
         return expenses[Integer.parseInt(expenseID)-1];
 
@@ -559,6 +523,35 @@ return sb.toString();
 
     public void setParliament(Parliament parliament) {
         this.parliament = parliament;
+    }
+
+    public LinkedList<String> downloadCountries() throws FileNotFoundException, JSONException {
+        LinkedList<String> country=new LinkedList<>();
+
+
+        for (Politican p:parliament.showPoliticans()){
+
+            JSONObject json= new JSONObject(new Scanner(new File("/home/przemek/Dokumenty/JavaWorkspace/oop/lab9/API/res/politican/"+term+"/"+p.getID()+".json")).useDelimiter("\\Z").next());
+            try{
+                JSONArray j=json.getJSONObject("layers").getJSONArray("wyjazdy");
+                for(int i=0; i<j.length(); i++){
+
+                    if(!country.contains(j.getJSONObject(i).getString("kraj")))
+                        country.add(j.getJSONObject(i).getString("kraj"));
+                }
+            }
+            catch(JSONException e){
+               //
+            }
+
+        }
+
+        return country;
+
+
+
+
+
     }
 }
 
