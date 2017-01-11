@@ -7,13 +7,6 @@ import java.io.IOException;
  */
 public class ResourceUpdater {
 
-
-
-
-
-
-
-
     public static void buildResources() throws IOException, JSONException {
 
         DataDownloader dd=new DataDownloader("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=8");
