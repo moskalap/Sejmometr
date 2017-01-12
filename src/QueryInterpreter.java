@@ -62,8 +62,8 @@ public class QueryInterpreter implements IQueryInterpreter {
 
                 out.append("\nCzłonek partii ").
                         append(requestedData.party).
-                        append("\nktóry odbył najdłuższa podróż to\n").
-                        append(dataDownloader.downloadTheLongTravel(requestedData.party).getName());
+                        append("\nktóry najdłużej przebywał za granicą to\n").
+                        append(dataDownloader.downloadTheLongTravel(requestedData.party));
 
 
 
@@ -112,8 +112,8 @@ public class QueryInterpreter implements IQueryInterpreter {
             }
             if(requestedData.wantsTheLongestTravel){
 
-                out.append("\nPoseł który odbył najdłuższą podróż ").
-                        append(dataDownloader.downloadTheLongTravel("-a").getName());
+                out.append("\nPoseł który najdłużej przebywał za granicą ").
+                        append(dataDownloader.downloadTheLongTravel("-a"));
 
 
 

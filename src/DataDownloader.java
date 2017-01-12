@@ -32,7 +32,7 @@ public class DataDownloader {
         this.mainUrl=url;
         this.url=mainUrl+"&_type=objects&page=";
         expenses=this.downloadArrayExp(174);
-        term="7";
+       // term="7";
 
     }
 
@@ -80,6 +80,34 @@ return sb.toString();
             is.close();
         }
     }
+    public  void saveJsonFromPage(String page) throws IOException, JSONException {
+        InputStream is = new URL(this.url+page).openStream();
+        try {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String jsonText = readAll(rd);
+            Writer writer = null;
+
+            try {
+                writer = new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream("/home/przemek/Dokumenty/JavaWorkspace/oop/lab9/API/res/politican/"+term+"/poslowie"+page+".json"), "utf-8"));
+                System.out.println("zapisuje w "+"/home/przemek/Dokumenty/JavaWorkspace/oop/lab9/API/res/politican/"+term+"/poslowie"+page+".json");
+                writer.write(jsonText);
+
+            } catch (IOException ex) {
+                // report
+            } finally {
+                try {writer.close();} catch (Exception ex) {/*ignore*/}
+            }
+            // PrintWriter out= new PrintWriter("/politican/"+id+".txt");
+            //out.print(jsonText);
+            //out.close();
+
+        } finally {
+            is.close();
+        }
+    }
+
+
     public  JSONObject readJsonFrom(String url) throws IOException, JSONException {
         InputStream is = new URL(url).openStream();
         try {
@@ -140,10 +168,11 @@ j.getJSONArray("items").getJSONObject(0).getString("link");
     public void downloadParties(Parliament parliament) throws IOException, JSONException {
         int ih=0;
         System.out.println("Downloading Data");
-        for(int i=1; i<=15; i++) {
+        for(int i=1; i<15; i++) {
             System.out.println((i*100)/15+"%");
            // progressBar1.setValue(i*100/15);
-            JSONObject json = readJsonFromPage(new Integer(i).toString());
+            JSONObject json= new JSONObject(new Scanner(new File("/home/przemek/Dokumenty/JavaWorkspace/oop/lab9/API/res/politican/"+term+"/poslowie"+i+".json")).useDelimiter("\\Z").next());
+
             JSONArray jsonArray = json.getJSONArray("Dataobject");
             for (int j = 0; j < jsonArray.length(); j++) {
                 ih++;
@@ -180,6 +209,8 @@ j.getJSONArray("items").getJSONObject(0).getString("link");
            // String u="https://api-v3.mojepanstwo.pl/dane/poslowie/"+id+".json?layers[]=wydatki";
            // JSONObject json =readJsonFrom(u);
         JSONObject json= new JSONObject(new Scanner(new File("/home/przemek/Dokumenty/JavaWorkspace/oop/lab9/API/res/politican/"+term+"/"+id+".json")).useDelimiter("\\Z").next());
+
+
         JSONArray j=json.getJSONObject("layers").getJSONObject("wydatki").getJSONArray("roczniki");
            for(int i=0; i<j.length(); i++){
              JSONArray expenses=j.getJSONObject(i).getJSONArray("pola");
@@ -320,16 +351,18 @@ j.getJSONArray("items").getJSONObject(0).getString("link");
 
 
         for(Politican p:listOfPolitican){
-            if (wasTravellerTo_(country,p.getID())) res.add(p);
+            if (wasTravellerTo_(country,p.getID()) && ! res.contains(p)) res.add(p);
 
         }
 
         return res;
     }
 
-    public Politican  downloadTheLongTravel(String party) throws FileNotFoundException, JSONException {
-    Politican res=new Politican(-23,"nikt","nikt");
+    public String  downloadTheLongTravel(String party) throws FileNotFoundException, JSONException {
+    //Politican res=new Politican(-23,"nikt","nikt");
         int days=0;
+        int maxDays=0;
+        String res="";
 
 
         LinkedList<Politican> listOfPolitican;
@@ -345,7 +378,7 @@ j.getJSONArray("items").getJSONObject(0).getString("link");
 
 
         for(Politican p:listOfPolitican){
-
+            days=0;
 
             System.out.println("CURMAX="+days+"\nSprawdzam"+p.getID()+" "+p.getName());
 
@@ -355,13 +388,17 @@ j.getJSONArray("items").getJSONObject(0).getString("link");
 
                 JSONArray j=json.getJSONObject("layers").getJSONArray("wyjazdy");
                 for(int i=0; i<j.length(); i++){
-                    if(Integer.parseInt(j.getJSONObject(i).getString("liczba_dni"))>days){
-                        days=Integer.parseInt(j.getJSONObject(i).getString("liczba_dni"));
-                        res=p;
-                        System.out.println(p.getID()+" "+p.getName()+ days);
-                    }
 
-                    System.out.print("|"+Integer.parseInt(j.getJSONObject(i).getString("liczba_dni")));
+
+
+                    days+=Integer.parseInt(j.getJSONObject(i).getString("liczba_dni"));
+
+
+
+                }
+                if (days>maxDays){
+                    res=p.getName();
+                    maxDays=days;
                 }
             }
             catch(JSONException e){
@@ -375,7 +412,7 @@ j.getJSONArray("items").getJSONObject(0).getString("link");
         }
 
 
-        return res;
+        return res+" dni:"+maxDays;
     }
 
     public String downloadTheExpensiverTraveller(String party) throws FileNotFoundException, JSONException {
@@ -511,7 +548,7 @@ j.getJSONArray("items").getJSONObject(0).getString("link");
 
     public void saveObj(String id, String term) throws IOException, JSONException {
         String u="https://api-v3.mojepanstwo.pl/dane/poslowie/"+id+".json?layers[]=wydatki&layers[]=wyjazdy";
-
+        System.out.println(u);
         saveJsonFrom(u, id, term);
 
     }
@@ -548,6 +585,17 @@ j.getJSONArray("items").getJSONObject(0).getString("link");
 
         return country;
 
+
+
+
+
+    }
+
+    public void savePoliticanlist(Parliament parliament7) throws IOException, JSONException {
+       System.out.println("zapisuje dla parlamentu");
+
+        for(int i=0; i<15; i++)
+        saveJsonFromPage(new Integer(i).toString());
 
 
 

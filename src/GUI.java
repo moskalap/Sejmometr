@@ -49,7 +49,7 @@ public class GUI {
 
 
   public GUI() {
-        enableAll();
+        hideAll();
         comboBox2.addItem("Wszystkie");
         comboBox1.addActionListener(new ActionListener() {
             @Override
@@ -58,7 +58,8 @@ public class GUI {
                 try {
                     firstTriggered();
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    System.out.println(e.toString());
+                    System.out.println("asd");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -169,7 +170,7 @@ public class GUI {
         queryInterpreter.setParliament(parliament);
         queryInterpreter.setDownloader(dd);
     }
-    private void enableAll() {
+    private void hideAll() {
         comboBox4.setVisible(false);
         comboBox2.setVisible(false);
         comboBox3.setVisible(false);
@@ -185,6 +186,9 @@ public class GUI {
         podroze.setVisible(false);
 
     }
+
+
+
     public static BufferedImage resize(BufferedImage img, int newW, int newH) {
         Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
         BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
@@ -231,6 +235,8 @@ public class GUI {
 
         return img;
     }
+
+
     private void fourthTriggered() {
         requestedData.expenseID = ((String) (comboBox4.getSelectedItem())).split("\\.")[0];
     }

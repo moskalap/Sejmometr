@@ -1,7 +1,13 @@
 import org.json.JSONException;
 
+import javax.swing.*;
 import javax.xml.crypto.Data;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by przemek on 17.12.16.
@@ -15,8 +21,18 @@ public class Tester {
 
 
     public static void main(String[] args) throws IOException, JSONException {
-        //testDownloadingofPartyAvg();
-testDownloadTMExpesTrav();
+
+
+
+testDownloadingListofTravellersTo();
+
+
+
+
+
+
+
+
     }
 
     private static void testDownloadingTheMostTrav() throws IOException, JSONException {
@@ -92,14 +108,23 @@ testDownloadTMExpesTrav();
         rd.expenseID="3";
 
 
+
         QueryInterpreter q= new QueryInterpreter(rd);
+        q.setParliament(buildParliament("7"));
         System.out.println(q.interpret(rd));
 
     }
 
 
 
-
+private static Parliament buildParliament(String term) throws IOException, JSONException {
+    DataDownloader dd=new DataDownloader("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]="+term);
+    Parliament parliament = new Parliament();
+    dd.term="7";
+    dd.downloadParties(parliament);
+    dd.savePoliticanlist(parliament);
+    return parliament;
+}
 
     private static void testDownloadingofPartyAvg() throws IOException, JSONException {
         RequestedData rd=new RequestedData();
@@ -202,8 +227,9 @@ private static void single() throws IOException, JSONException {
 
         DataDownloader dd=new DataDownloader("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=8");
         Parliament parliament = new Parliament();
-        dd.downloadParties(parliament);
-
+        dd.term="8";
+       dd.downloadParties(parliament);
+        dd.savePoliticanlist(parliament);
 
         int perc=1;
         int j=1;
@@ -212,10 +238,10 @@ private static void single() throws IOException, JSONException {
             //  System.out.println("Partia "+k+ o.getName());
             int g=1;
             for( Politican p:o.getPoliticans()){
-                System.out.println( g+ ". Polityk: " + p.getName() +"("+p.getID()+")");
+                //System.out.println( g+ ". Polityk: " + p.getName() +"("+p.getID()+")");
                 dd.saveObj(p.getID(), "8");
 
-                System.out.println(perc*100/(parliament.showPoliticans().size())+"%");
+                //System.out.println(perc*100/(parliament.showPoliticans().size())+"%");
                 perc+=1.0;
                 g++;
                 j++;
@@ -228,8 +254,12 @@ private static void single() throws IOException, JSONException {
 
 
         DataDownloader dd7=new DataDownloader("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=7");
+        dd7.term="7";
         Parliament parliament7 = new Parliament();
-        dd7.downloadParties(parliament7);
+       dd7.downloadParties(parliament7);
+        //dd7.term="7";
+        dd7.savePoliticanlist(parliament7);
+
 
 
         perc=1;

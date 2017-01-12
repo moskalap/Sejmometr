@@ -25,6 +25,7 @@ public class Parliament {
     public void addPolitican(Politican politican, String partyID){
         politicans.put(politican.getID(), politican);
         politicansbyName.put(politican.getName(), politican);
+        if(list.contains(politican)) System.out.println(politican.getName());
         list.add(politican);
         parties.get(partyID).addPolitical(politican);
     }
