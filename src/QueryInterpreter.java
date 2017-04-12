@@ -49,7 +49,7 @@ public class QueryInterpreter implements IQueryInterpreter {
             if(requestedData.wantsListofTravellersTo_) {
                 out.append("\nPosłowie z partii ").
                         append(requestedData.party).
-                        append("\nktórzy podrózowali do ").
+                        append("\nktórzy podrózowali do \n").
                         append(requestedData.country+"\n");
                         for(Politican politican:dataDownloader.downloadListofTravellersto_(requestedData.country, requestedData.party)) {
                             out.append(politican.getName());
@@ -96,12 +96,12 @@ public class QueryInterpreter implements IQueryInterpreter {
             if(requestedData.wantsAverage)
                 out.append("Suma wydatków wszystkich posłów wynosi ").
                         append(dataDownloader.downloadSumOfParty("-a", parliament)).
-                        append("\nŚrednia wydatków wszyskich posłów wynosi").
+                        append(" zł \nŚrednia wydatków wszyskich posłów wynosi").
                         append(dataDownloader.downloadAvgOfParty("-a",parliament)).
-                        append("\n\n\n\n");
+                        append(" zł\n\n\n\n");
 
             if(requestedData.wantsListofTravellersTo_) {
-                out.append("\nPosłowie, ktorzy podróżowali do ").
+                out.append("\nPosłowie, ktorzy podróżowali do \n").
                         append(requestedData.country);
                 for(Politican politican:dataDownloader.downloadListofTravellersto_(requestedData.country, "-a")) {
                     out.append(politican.getName());
